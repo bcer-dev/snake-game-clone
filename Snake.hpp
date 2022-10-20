@@ -8,6 +8,7 @@ class Snake
 {
 private:
     const int gridSquareSize;
+    const sf::Color snakeColour;
 
     sf::Clock movementTimer;
     sf::RectangleShape rect;
@@ -23,6 +24,10 @@ public:
     void PointRight();
     void PointUp();
     void PointDown();
+    bool Touching(const sf::RectangleShape& other) const;
+    bool TouchingEdge(const sf::Vector2u& windowSize) const;
+    bool SelfCollision() const;
+    void AddSegment();
 };
 
 #endif
