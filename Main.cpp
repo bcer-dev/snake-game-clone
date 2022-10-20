@@ -1,8 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <iostream>
+
 #include "Snake.hpp"
 #include "GameOverScreen.hpp"
+#include "Controls.hpp"
 
 sf::RectangleShape CreateFood(int gridSquareSize, sf::Vector2u windowSize)
 {
@@ -37,16 +39,16 @@ int main()
         return -1;
     }
 
-    const int gridSquareSize = 600 / 30;
+    bool gameOver = false;
+    GameOverScreen::Init(window, fuzzyBubbles);
+
+    const int gridSquareSize = window.getSize().x / 30;
     Snake snake(gridSquareSize);
 
     // Spawn food in a random grid square and set score to 0.
     sf::RectangleShape food = CreateFood(gridSquareSize, window.getSize());
     bool moveLeft = false, moveUp = false, moveRight = false, moveDown = false;
     int score = 0;
-
-    bool gameOver = false;
-    GameOverScreen::Init(window, fuzzyBubbles);
 
     while (window.isOpen())
     {
@@ -60,57 +62,11 @@ int main()
                 break;
 
             case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::A)
-                {
-                    moveLeft = true;
-                    break;
-                }
-
-                if (event.key.code == sf::Keyboard::W)
-                {
-                    moveUp = true;
-                    break;
-                }
-
-                if (event.key.code == sf::Keyboard::D)
-                {
-                    moveRight = true;
-                    break;
-                }
-
-                if (event.key.code == sf::Keyboard::S)
-                {
-                    moveDown = true;
-                    break;
-                }
-
+                Controls::HandleKeyDown(event);
                 break;
 
             case sf::Event::KeyReleased:
-                if (event.key.code == sf::Keyboard::A)
-                {
-                    moveLeft = false;
-                    break;
-                }
-
-                if (event.key.code == sf::Keyboard::W)
-                {
-                    moveUp = false;
-                    break;
-                }
-
-                if (event.key.code == sf::Keyboard::D)
-                {
-                    moveRight = false;
-                    break;
-                }
-
-                if (event.key.code == sf::Keyboard::S)
-                {
-                    moveDown = false;
-                    break;
-                }
-
+                Controls::HandleKeyUp(event);
                 break;
             }
         }
@@ -122,16 +78,16 @@ int main()
             continue;
         }
 
-        if (moveLeft)
+        if (Controls::Left())
             snake.PointLeft();
 
-        if (moveUp)
+        if (Controls::Up())
             snake.PointUp();
 
-        if (moveDown)
+        if (Controls::Down())
             snake.PointDown();
 
-        if (moveRight)
+        if (Controls::Right())
             snake.PointRight();
 
         // When the snake eats the food, increase score and size, and respawn the food elsewhere.
