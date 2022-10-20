@@ -88,7 +88,7 @@ void Snake::AddSegment()
     }
 
     auto position = bodySegments[bodySegments.size() - 1].getPosition();
-    position -= delta;
+    // position -= delta;
     segment.setPosition(position);
 
     bodySegments.push_back(segment);
