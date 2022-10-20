@@ -2,6 +2,7 @@
 #include <random>
 #include <iostream>
 #include "Snake.hpp"
+#include "GameOverScreen.hpp"
 
 sf::RectangleShape CreateFood(int gridSquareSize, sf::Vector2u windowSize)
 {
@@ -24,14 +25,28 @@ int main()
     srand(time(NULL));
     sf::Color backgroundColour(139, 212, 232);
 
+    // Set up window
     sf::RenderWindow window(sf::VideoMode(600, 600), "Snake Game", sf::Style::Close);
     window.setVerticalSyncEnabled(true);
+
+    // Load font from ./Fonts
+    sf::Font fuzzyBubbles;
+    if (!fuzzyBubbles.loadFromFile("Fonts/FuzzyBubbles-Bold.ttf"))
+    {
+        window.close();
+        return -1;
+    }
 
     const int gridSquareSize = 600 / 30;
     Snake snake(gridSquareSize);
 
+    // Spawn food in a random grid square and set score to 0.
     sf::RectangleShape food = CreateFood(gridSquareSize, window.getSize());
     bool moveLeft = false, moveUp = false, moveRight = false, moveDown = false;
+    int score = 0;
+
+    bool gameOver = false;
+    GameOverScreen::Init(window, fuzzyBubbles);
 
     while (window.isOpen())
     {
@@ -100,6 +115,13 @@ int main()
             }
         }
 
+        // Show the game over screen if the player has lost.
+        if (gameOver)
+        {
+            GameOverScreen::Show();
+            continue;
+        }
+
         if (moveLeft)
             snake.PointLeft();
 
@@ -112,19 +134,18 @@ int main()
         if (moveRight)
             snake.PointRight();
 
-        snake.Update();
-
+        // When the snake eats the food, increase score and size, and respawn the food elsewhere.
         if (snake.Touching(food))
         {
             food = CreateFood(gridSquareSize, window.getSize());
             snake.AddSegment();
+            score += 25;
         } 
 
         if (snake.TouchingEdge(window.getSize()) || snake.SelfCollision())
-        {
-            return -1;
-        }
+            gameOver = true;
 
+        snake.Update();
         window.clear(backgroundColour);
         snake.DrawTo(window);
         window.draw(food);

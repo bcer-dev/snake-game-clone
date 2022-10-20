@@ -29,11 +29,10 @@ void Snake::Update()
     position += delta;
     rect.setPosition(position);
 
-    // Store field: endSegmentLastPosition
-
     movementTimer.restart();
 }
 
+// Draw the snake onto the window.
 void Snake::DrawTo(sf::RenderWindow& window) const
 {
     window.draw(rect);
@@ -70,6 +69,7 @@ bool Snake::Touching(const sf::RectangleShape& other) const
     return rect.getGlobalBounds().intersects(other.getGlobalBounds());
 }
 
+// Add a new body segment to the end of the snake.
 void Snake::AddSegment()
 {
     sf::Vector2f size(gridSquareSize, gridSquareSize);
@@ -94,6 +94,7 @@ void Snake::AddSegment()
     bodySegments.push_back(segment);
 }
 
+// Check if the snake is off the window.
 bool Snake::TouchingEdge(const sf::Vector2u& windowSize) const
 {
     auto pos = rect.getPosition();
@@ -107,6 +108,7 @@ bool Snake::TouchingEdge(const sf::Vector2u& windowSize) const
     return touchingLeft || touchingRight || touchingTop || touchingBottom;
 }
 
+// Check if the snakes head has collided with its body.
 bool Snake::SelfCollision() const
 {
     for (const auto& segment : bodySegments)
