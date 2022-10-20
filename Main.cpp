@@ -90,6 +90,8 @@ int main()
         if (Controls::Right())
             snake.PointRight();
 
+        snake.Update();
+
         // When the snake eats the food, increase score and size, and respawn the food elsewhere.
         if (snake.Touching(food))
         {
@@ -101,7 +103,6 @@ int main()
         if (snake.TouchingEdge(window.getSize()) || snake.SelfCollision())
             gameOver = true;
 
-        snake.Update();
         window.clear(backgroundColour);
         snake.DrawTo(window);
         window.draw(food);
